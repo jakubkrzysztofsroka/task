@@ -1,9 +1,6 @@
 package com.jsroka.task.services
 
-import cats.effect.IO
 import cats.effect.kernel.Async
-import cats.implicits._
-import cats.instances._
 import com.jsroka.task.configuration.KafkaConfiguration
 import com.jsroka.task.services.file.CsvReadingService
 import fs2._
@@ -15,7 +12,7 @@ class KafkaSumProducer[F[_]: Async](
 ) {
 
   private val producerSettings =
-    ProducerSettings[F, String, Int]
+    ProducerSettings[F, String, String]
       .withBootstrapServers(kafkaConfiguration.address)
 
   def produceSumsFromFile(fileName: String, numberOfStreams: Int): F[Unit] = {
@@ -26,21 +23,21 @@ class KafkaSumProducer[F[_]: Async](
       .drain
   }
 
-  private def getProducers(numberOfStreams: Int): List[Pipe[F, Int, ProducerResult[Unit, String, Int]]] =
+  private def getProducers(numberOfStreams: Int): List[Pipe[F, Int, ProducerResult[Unit, String, String]]] =
     (0 until numberOfStreams).map(remainder => singleSumAndProducePipe(remainder, numberOfStreams)).toList
 
   private def singleSumAndProducePipe(
     remainder: Int,
     numberOfStreams: Int
-  ): Pipe[F, Int, ProducerResult[Unit, String, Int]] =
+  ): Pipe[F, Int, ProducerResult[Unit, String, String]] =
     _.filter(v => v % numberOfStreams == remainder).chunkAll
       .map(_.toList.sum)
       .map(toProducerRecord(remainder, _))
-      .map(a => ProducerRecords.one[String, Int](a))
+      .map(a => ProducerRecords.one[String, String](a))
       .through(KafkaProducer.pipe(producerSettings))
 
-  private def toProducerRecord(modulo: Int, sum: Int): ProducerRecord[String, Int] =
-    ProducerRecord(getTopicName(modulo, kafkaConfiguration.topicPrefix), modulo.toString, sum)
+  private def toProducerRecord(modulo: Int, sum: Int): ProducerRecord[String, String] =
+    ProducerRecord(getTopicName(modulo, kafkaConfiguration.topicPrefix), modulo.toString, sum.toString)
 
   private def getTopicName(moduloValue: Int, prefix: String) = s"$prefix$moduloValue"
 }

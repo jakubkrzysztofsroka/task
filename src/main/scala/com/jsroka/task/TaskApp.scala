@@ -9,6 +9,7 @@ import com.jsroka.task.services.file.CsvIntReader
 import com.jsroka.task.services.file.CsvReadingService
 import com.jsroka.task.services.queue.KafkaAdminService
 import com.jsroka.task.services.queue.QueueAdminService
+import scala.language.postfixOps
 
 class TaskApp(configuration: Configuration) {
 
@@ -19,11 +20,8 @@ class TaskApp(configuration: Configuration) {
     val topicSuffixes = (0 until configuration.modulo).map(_.toString).toList
     val program = for {
       _ <- queueAdminService.createTopics(topicSuffixes)
-      _ = println("created")
       _ <- kafkaSumProducer.produceSumsFromFile(configuration.fileName, configuration.modulo)
-      _ = println("sent")
       _ <- queueAdminService.deleteTopics(topicSuffixes)
-      _ = println("deleted")
     } yield ()
 
     program.handleErrorWith { _ =>

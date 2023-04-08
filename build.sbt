@@ -10,3 +10,5 @@ libraryDependencies += "com.github.fd4s" %% "fs2-kafka" % "2.5.0"
 libraryDependencies += "org.gnieh" %% "fs2-data-csv" % "1.7.0"
 libraryDependencies += "org.gnieh" %% "fs2-data-csv-generic" % "1.7.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.15"
+
+parallelExecution in Test := false
