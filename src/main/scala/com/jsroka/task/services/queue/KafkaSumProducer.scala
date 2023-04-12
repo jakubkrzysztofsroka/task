@@ -37,10 +37,8 @@ class KafkaSumProducer[F[_]: Async](
       .map(ProducerRecords.one[String, String])
       .through(KafkaProducer.pipe(producerSettings))
 
-  private def toProducerRecord(modulo: Int, sum: Int): ProducerRecord[String, String] = {
-    println(s"producer record ${modulo}")
+  private def toProducerRecord(modulo: Int, sum: Int): ProducerRecord[String, String] =
     ProducerRecord(getTopicName(modulo, kafkaConfiguration.topicPrefix), modulo.toString, sum.toString)
-  }
 
   private def getTopicName(moduloValue: Int, prefix: String) = s"$prefix$moduloValue"
 }

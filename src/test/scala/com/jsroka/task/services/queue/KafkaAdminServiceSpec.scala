@@ -27,7 +27,6 @@ class KafkaAdminServiceSpec extends AnyFlatSpecLike with Matchers {
     val kafkaAdminService = new KafkaAdminService[IO](kafkaConfiguration)
 
     val topicNames = kafkaAdminClientResource.use(_.listTopics.names).unsafeRunSync()
-    topicNames.filter(_.contains("sum-modulo-")).foreach(println)
     topicNames.count(_.contains("sum-modulo-")) shouldBe 0
 
     kafkaAdminService.createTopics(Seq("0", "1")).unsafeRunSync()
