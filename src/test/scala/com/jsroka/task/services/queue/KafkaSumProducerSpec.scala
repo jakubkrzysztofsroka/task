@@ -1,10 +1,9 @@
-package com.jsroka.task.services
+package com.jsroka.task.services.queue
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import com.jsroka.task.configuration.AppConfiguration
 import com.jsroka.task.services.file.CsvIntReader
-import com.jsroka.task.services.queue.KafkaAdminService
 import com.jsroka.task.services.utils.KafkaUtils
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpecLike
@@ -28,10 +27,10 @@ class KafkaSumProducerSpec
   it should "read file create N topics according to configuration and produce sum for all" +
     " values that have the same remainder value for modulo N operation." in {
 
-      val kafkaSumProducer = new KafkaSumProducer[IO](new CsvIntReader[IO], configuration.kafka)
+      val kafkaSumProducer = new KafkaSumProducer[IO](new CsvIntReader[IO], configuration.kafka, configuration.modulo)
 
       kafkaSumProducer
-        .produceSumsFromFile(fileName = configuration.fileName, numberOfStreams = configuration.modulo)
+        .produce(fileName = configuration.fileName)
         .unsafeRunSync()
 
       getOneValueFromTopic(configuration.kafka.topicPrefix + "0") shouldEqual "18"

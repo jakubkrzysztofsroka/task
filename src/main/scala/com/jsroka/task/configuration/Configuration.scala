@@ -8,7 +8,8 @@ import pureconfig.generic.auto._
 case class Configuration(
   fileName: String,
   modulo: Int,
-  kafka: KafkaConfiguration
+  kafka: KafkaConfiguration,
+  http: HttpConfiguration
 )
 
 case class KafkaConfiguration(
@@ -16,6 +17,11 @@ case class KafkaConfiguration(
   topicPrefix: String,
   numberOfPartitions: Int,
   replicationFactor: Int
+)
+
+case class HttpConfiguration(
+  host: String,
+  port: String
 )
 
 object Configuration {

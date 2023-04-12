@@ -7,7 +7,7 @@ import org.scalatest.matchers.should.Matchers
 
 class CsvIntReaderSpec extends AnyFlatSpecLike with Matchers {
 
-  private val testedFileName = "example.csv"
+  private val testedFileName = "src/test/resources/example.csv"
 
   it should "read example file from resources and return stream of elements" in {
 

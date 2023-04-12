@@ -1,4 +1,4 @@
-package com.jsroka.task.services
+package com.jsroka.task.services.queue
 
 import cats.effect.kernel.Async
 import com.jsroka.task.configuration.KafkaConfiguration
@@ -8,14 +8,15 @@ import fs2.kafka._
 
 class KafkaSumProducer[F[_]: Async](
   csvReadingService: CsvReadingService[F, Int],
-  kafkaConfiguration: KafkaConfiguration
-) {
+  kafkaConfiguration: KafkaConfiguration,
+  numberOfStreams: Int
+) extends FromFileQueueProducer[F] {
 
   private val producerSettings =
     ProducerSettings[F, String, String]
       .withBootstrapServers(kafkaConfiguration.address)
 
-  def produceSumsFromFile(fileName: String, numberOfStreams: Int): F[Unit] = {
+  def produce(fileName: String): F[Unit] = {
     csvReadingService
       .readCsv(fileName)
       .broadcastThrough(getProducers(numberOfStreams): _*)
@@ -30,14 +31,16 @@ class KafkaSumProducer[F[_]: Async](
     remainder: Int,
     numberOfStreams: Int
   ): Pipe[F, Int, ProducerResult[Unit, String, String]] =
-    _.filter(v => v % numberOfStreams == remainder).chunkAll
+    _.filter(_ % numberOfStreams == remainder).chunkAll
       .map(_.toList.sum)
       .map(toProducerRecord(remainder, _))
-      .map(a => ProducerRecords.one[String, String](a))
+      .map(ProducerRecords.one[String, String])
       .through(KafkaProducer.pipe(producerSettings))
 
-  private def toProducerRecord(modulo: Int, sum: Int): ProducerRecord[String, String] =
+  private def toProducerRecord(modulo: Int, sum: Int): ProducerRecord[String, String] = {
+    println(s"producer record ${modulo}")
     ProducerRecord(getTopicName(modulo, kafkaConfiguration.topicPrefix), modulo.toString, sum.toString)
+  }
 
   private def getTopicName(moduloValue: Int, prefix: String) = s"$prefix$moduloValue"
 }

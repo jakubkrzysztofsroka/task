@@ -10,8 +10,7 @@ import fs2.io.file.Path
 
 class CsvIntReader[F[_]: Async] extends CsvReadingService[F, Int] {
 
-  override def readCsv(fileName: String): Stream[F, Int] = {
-    val resourcePath = getClass.getClassLoader.getResource(fileName).toURI.getPath
-    Files[F].readAll(Path(resourcePath)).through(decodeWithoutHeaders[file.CsvRow]()).map(_.value)
+  override def readCsv(filePath: String): Stream[F, Int] = {
+    Files[F].readAll(Path(filePath)).through(decodeWithoutHeaders[file.CsvRow]()).map(_.value)
   }
 }
