@@ -12,6 +12,9 @@ libraryDependencies += "org.gnieh" %% "fs2-data-csv-generic" % "1.7.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.15"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % "1.2.9"
 libraryDependencies += "org.http4s" %% "http4s-ember-server" % "0.23.18"
-//libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.6"
 libraryDependencies += "org.http4s" %% "http4s-dsl" % "0.23.18"
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs" % "1.2.12"
+libraryDependencies += "com.softwaremill.sttp.apispec" %% "asyncapi-circe-yaml" % "0.3.2"
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui" % "1.2.12"
+
 parallelExecution in Test := false

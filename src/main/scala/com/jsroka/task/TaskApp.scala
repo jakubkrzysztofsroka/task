@@ -10,11 +10,9 @@ import com.jsroka.task.services.http.HttpServer
 import com.jsroka.task.services.http.Routes
 import com.jsroka.task.services.http.TapirHttp4sServer
 import com.jsroka.task.services.http.WaitOnKeyToTerminateServerLogic
-import com.jsroka.task.services.queue.FromFileQueueProducer
-import com.jsroka.task.services.queue.KafkaAdminService
-import com.jsroka.task.services.queue.KafkaStreamConsumer
-import com.jsroka.task.services.queue.KafkaSumProducer
-import com.jsroka.task.services.queue.QueueAdminService
+import com.jsroka.task.services.queue.admin.{KafkaAdminService, QueueAdminService}
+import com.jsroka.task.services.queue.consumer.KafkaStreamConsumer
+import com.jsroka.task.services.queue.producer.{FromFileQueueProducer, KafkaSumProducer}
 import org.http4s.server.Server
 import scala.language.postfixOps
 

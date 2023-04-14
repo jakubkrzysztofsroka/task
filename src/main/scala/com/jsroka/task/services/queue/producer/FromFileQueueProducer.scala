@@ -1,4 +1,4 @@
-package com.jsroka.task.services.queue
+package com.jsroka.task.services.queue.producer
 
 trait FromFileQueueProducer[F[_]] {
 

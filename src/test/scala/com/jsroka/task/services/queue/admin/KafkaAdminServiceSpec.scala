@@ -1,11 +1,9 @@
-package com.jsroka.task.services.queue
+package com.jsroka.task.services.queue.admin
 
-import cats.effect.IO
-import cats.effect.Resource
+import cats.effect.{IO, Resource}
 import cats.effect.unsafe.implicits.global
 import com.jsroka.task.configuration.KafkaConfiguration
-import fs2.kafka.AdminClientSettings
-import fs2.kafka.KafkaAdminClient
+import fs2.kafka.{AdminClientSettings, KafkaAdminClient}
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
 

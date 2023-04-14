@@ -12,6 +12,7 @@ import org.http4s.server.Router
 import org.http4s.server.Server
 import org.http4s.server.websocket.WebSocketBuilder2
 import sttp.tapir.server.http4s.Http4sServerInterpreter
+import sttp.tapir.swagger.SwaggerUI
 
 class TapirHttp4sServer[F[_]: Async](configuration: HttpConfiguration, routes: Routes[F])
   extends HttpServer[F, Server] {
@@ -19,12 +20,14 @@ class TapirHttp4sServer[F[_]: Async](configuration: HttpConfiguration, routes: R
   private val wsRoutes: WebSocketBuilder2[F] => HttpRoutes[F] =
     Http4sServerInterpreter[F]().toWebSocketRoutes(routes.websocketEndpoint)
 
+  private val docRoutes = Http4sServerInterpreter[F]().toRoutes(routes.docsEndpoint)
+
   def serve(onServerRun: Server => F[Unit]): F[ExitCode] = EmberServerBuilder
     .default[F]
     .withHost(Host.fromString(configuration.host).get)
     .withPort(Port.fromString(configuration.port).get)
     .withHttpWebSocketApp { wsb =>
-      Router("/" -> wsRoutes(wsb)).orNotFound
+      Router("/docs" -> docRoutes, "/" -> wsRoutes(wsb)).orNotFound
     }
     .build
     .use { server =>

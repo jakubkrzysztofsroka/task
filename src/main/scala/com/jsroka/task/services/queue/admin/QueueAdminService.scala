@@ -1,4 +1,4 @@
-package com.jsroka.task.services.queue
+package com.jsroka.task.services.queue.admin
 
 trait QueueAdminService[F[_]] {
 
