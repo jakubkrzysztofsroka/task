@@ -6,12 +6,16 @@ import com.jsroka.task.configuration.AppConfiguration
 import com.jsroka.task.configuration.Configuration
 import com.jsroka.task.services.file.CsvIntReader
 import com.jsroka.task.services.file.CsvReadingService
+import com.jsroka.task.services.http.HttpServer
+import com.jsroka.task.services.http.Routes
 import com.jsroka.task.services.http.TapirHttp4sServer
 import com.jsroka.task.services.http.WaitOnKeyToTerminateServerLogic
 import com.jsroka.task.services.queue.FromFileQueueProducer
 import com.jsroka.task.services.queue.KafkaAdminService
+import com.jsroka.task.services.queue.KafkaStreamConsumer
 import com.jsroka.task.services.queue.KafkaSumProducer
 import com.jsroka.task.services.queue.QueueAdminService
+import org.http4s.server.Server
 import scala.language.postfixOps
 
 class TaskApp(configuration: Configuration) {
@@ -20,18 +24,16 @@ class TaskApp(configuration: Configuration) {
   private val csvReadingService: CsvReadingService[IO, Int] = new CsvIntReader[IO]
   private val fromFileQueueProducer: FromFileQueueProducer[IO] =
     new KafkaSumProducer(csvReadingService, configuration.kafka, configuration.modulo)
-  private val tapirHttp4sServer = new TapirHttp4sServer(configuration.http)
+  private val queueStreamConsumer = new KafkaStreamConsumer[IO](configuration.kafka)
+  private val routes = new Routes[IO](queueStreamConsumer)
+  private val httpServer: HttpServer[IO, Server] = new TapirHttp4sServer[IO](configuration.http, routes)
 
   private def run(): IO[Unit] = {
     val topicSuffixes = (0 until configuration.modulo).map(_.toString).toList
     val program = for {
       _ <- queueAdminService.createTopics(topicSuffixes)
-      _ = println("here before file")
-      _ = Console.flush()
       _ <- fromFileQueueProducer.produce(configuration.fileName)
-      _ = println("here after file")
-      _ = Console.flush()
-      _ <- tapirHttp4sServer.serve(WaitOnKeyToTerminateServerLogic.onServerRun)
+      _ <- httpServer.serve(WaitOnKeyToTerminateServerLogic.onServerRun)
       _ <- queueAdminService.deleteTopics(topicSuffixes)
     } yield ()
 

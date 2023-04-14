@@ -1,15 +1,9 @@
 package com.jsroka.task.services.utils
 
-import cats.effect.ExitCode
 import cats.effect.IO
-import cats.effect.IOApp
 import cats.effect.unsafe.implicits.global
 import com.jsroka.task.configuration.AppConfiguration
-import fs2.kafka._
-import fs2.kafka.AutoOffsetReset
-import fs2.kafka.ConsumerSettings
-import fs2.kafka.KafkaConsumer
-import scala.concurrent.duration._
+import fs2.kafka.{AutoOffsetReset, ConsumerSettings, KafkaConsumer}
 
 trait KafkaUtils { _: AppConfiguration =>
 
