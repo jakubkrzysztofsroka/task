@@ -7,8 +7,9 @@ object WaitOnKeyToTerminateServerLogic {
 
   val onServerRun = (server: Server) => {
     for {
-      _ <- IO.println(s"Server started at http://localhost:${server.address.getPort}. Press ENTER key to exit.")
+      _ <- IO.println(s"Websocket available at http://localhost:${server.address.getPort}. Press ENTER key to exit.")
       _ <- IO.readLine
+      _ <- IO.println("Closing the web server. Goodbye!")
     } yield ()
   }
 

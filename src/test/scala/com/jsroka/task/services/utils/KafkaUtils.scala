@@ -3,7 +3,9 @@ package com.jsroka.task.services.utils
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import com.jsroka.task.configuration.AppConfiguration
-import fs2.kafka.{AutoOffsetReset, ConsumerSettings, KafkaConsumer}
+import fs2.kafka.AutoOffsetReset
+import fs2.kafka.ConsumerSettings
+import fs2.kafka.KafkaConsumer
 
 trait KafkaUtils { _: AppConfiguration =>
 

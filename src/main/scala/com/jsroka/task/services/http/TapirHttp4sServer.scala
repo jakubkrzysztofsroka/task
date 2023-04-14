@@ -17,7 +17,7 @@ class TapirHttp4sServer[F[_]: Async](configuration: HttpConfiguration, routes: R
   extends HttpServer[F, Server] {
 
   private val wsRoutes: WebSocketBuilder2[F] => HttpRoutes[F] =
-    Http4sServerInterpreter[F]().toWebSocketRoutes(routes.end)
+    Http4sServerInterpreter[F]().toWebSocketRoutes(routes.websocketEndpoint)
 
   def serve(onServerRun: Server => F[Unit]): F[ExitCode] = EmberServerBuilder
     .default[F]

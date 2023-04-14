@@ -5,17 +5,21 @@ import com.jsroka.task.configuration.KafkaConfiguration
 import fs2.kafka.AutoOffsetReset
 import fs2.kafka.ConsumerSettings
 import fs2.kafka.KafkaConsumer
-class KafkaStreamConsumer[F[_]: Async](kafkaConfiguration: KafkaConfiguration) extends QueueStreamConsumer[F] {
+import java.util.UUID
+class KafkaStreamConsumer[F[_]: Async](kafkaConfiguration: KafkaConfiguration, generateRandomConsumerGroup: Boolean)
+  extends QueueStreamConsumer[F] {
+
+  private def groupId: String = if (generateRandomConsumerGroup) UUID.randomUUID().toString else "TaskApp"
 
   private val consumerSettings =
     ConsumerSettings[F, String, String]
       .withBootstrapServers(kafkaConfiguration.address)
       .withAutoOffsetReset(AutoOffsetReset.Earliest)
       .withEnableAutoCommit(enableAutoCommit = true)
-      .withGroupId("group")
+
   override def consume(topicName: String): fs2.Stream[F, String] = KafkaConsumer
-    .stream(consumerSettings)
-    .subscribeTo(topicName)
+    .stream(consumerSettings.withGroupId(groupId))
+    .subscribeTo(kafkaConfiguration.topicPrefix + topicName)
     .records
     .map(commitable => commitable.record.value)
 }

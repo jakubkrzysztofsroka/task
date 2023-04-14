@@ -24,7 +24,8 @@ class TaskApp(configuration: Configuration) {
   private val csvReadingService: CsvReadingService[IO, Int] = new CsvIntReader[IO]
   private val fromFileQueueProducer: FromFileQueueProducer[IO] =
     new KafkaSumProducer(csvReadingService, configuration.kafka, configuration.modulo)
-  private val queueStreamConsumer = new KafkaStreamConsumer[IO](configuration.kafka)
+  private val queueStreamConsumer =
+    new KafkaStreamConsumer[IO](configuration.kafka, configuration.readTopicFromBeginningOnConnection)
   private val routes = new Routes[IO](queueStreamConsumer)
   private val httpServer: HttpServer[IO, Server] = new TapirHttp4sServer[IO](configuration.http, routes)
 
@@ -38,6 +39,7 @@ class TaskApp(configuration: Configuration) {
     } yield ()
 
     program.handleErrorWith { _ =>
+      println("Error occurred during application run. Deleting existing topics")
       queueAdminService.deleteTopics(topicSuffixes)
     }
   }
