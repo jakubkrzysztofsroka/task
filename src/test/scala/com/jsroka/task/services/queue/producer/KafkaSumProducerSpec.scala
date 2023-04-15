@@ -5,7 +5,7 @@ import cats.effect.unsafe.implicits.global
 import com.jsroka.task.configuration.AppConfiguration
 import com.jsroka.task.services.file.CsvIntReader
 import com.jsroka.task.services.queue.admin.KafkaAdminService
-import com.jsroka.task.services.utils.KafkaUtils
+import com.jsroka.task.utils.KafkaUtils
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers

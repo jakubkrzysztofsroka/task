@@ -2,8 +2,9 @@ package com.jsroka.task.services.queue.consumer
 
 import cats.effect.kernel.Async
 import com.jsroka.task.configuration.KafkaConfiguration
-import fs2.kafka.{AutoOffsetReset, ConsumerSettings, KafkaConsumer}
-
+import fs2.kafka.AutoOffsetReset
+import fs2.kafka.ConsumerSettings
+import fs2.kafka.KafkaConsumer
 import java.util.UUID
 class KafkaStreamConsumer[F[_]: Async](kafkaConfiguration: KafkaConfiguration, generateRandomConsumerGroup: Boolean)
   extends QueueStreamConsumer[F] {
@@ -16,9 +17,9 @@ class KafkaStreamConsumer[F[_]: Async](kafkaConfiguration: KafkaConfiguration, g
       .withAutoOffsetReset(AutoOffsetReset.Earliest)
       .withEnableAutoCommit(enableAutoCommit = true)
 
-  override def consume(topicName: String): fs2.Stream[F, String] = KafkaConsumer
+  override def consume(topicSuffix: String): fs2.Stream[F, String] = KafkaConsumer
     .stream(consumerSettings.withGroupId(groupId))
-    .subscribeTo(kafkaConfiguration.topicPrefix + topicName)
+    .subscribeTo(kafkaConfiguration.topicPrefix + topicSuffix)
     .records
-    .map(commitable => commitable.record.value)
+    .map(_.record.value)
 }

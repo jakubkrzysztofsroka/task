@@ -1,4 +1,4 @@
-package com.jsroka.task.services.utils
+package com.jsroka.task.utils
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
