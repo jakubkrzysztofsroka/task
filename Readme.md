@@ -30,3 +30,7 @@ use the address(you can change value of the number parameter):
 ```shell
   http://localhost:8080/ws?number=0
 ```
+
+## Configuration 
+
+Both the used file and configuration can be found in src/main/resources
