@@ -9,7 +9,8 @@ case class Configuration(
   fileName: String,
   modulo: Int,
   kafka: KafkaConfiguration,
-  http: HttpConfiguration
+  http: HttpConfiguration,
+  readTopicFromBeginningOnConnection: Boolean
 )
 
 case class KafkaConfiguration(

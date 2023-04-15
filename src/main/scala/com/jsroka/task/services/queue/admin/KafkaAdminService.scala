@@ -1,4 +1,4 @@
-package com.jsroka.task.services.queue
+package com.jsroka.task.services.queue.admin
 
 import cats.effect._
 import com.jsroka.task.configuration.KafkaConfiguration

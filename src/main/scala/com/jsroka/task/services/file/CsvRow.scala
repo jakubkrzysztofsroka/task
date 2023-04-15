@@ -1,4 +1,4 @@
-package com.jsroka.task.domain.file
+package com.jsroka.task.services.file
 
 import fs2.data.csv.generic.semiauto.{deriveRowDecoder, deriveRowEncoder}
 import fs2.data.csv.{RowDecoder, RowEncoder}
